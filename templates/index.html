@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lucia Assistentin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Lato', sans-serif;
+      display: flex;
+      min-height: 100vh;
+      align-items: flex-start;
+      justify-content: center;
+      background-color: #2c2f33;
+      color: #f4f4f4;
+    }
+
+
+    .main-container {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 1200px;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      gap: 20px;
+    }
+
+
+    .container {
+      flex: 1;
+      min-width: 300px;
+      max-width: 400px;
+      text-align: center;
+      padding: 40px 20px;
+      background-color: #3a3d42;
+      border: 1px solid #484b51;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+    }
+
+
+    .history-container {
+      flex: 2;
+      min-width: 300px;
+      max-width: 700px;
+      height: 500px;
+      background-color: #33363a;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .history-container h2 {
+      margin-top: 0;
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #e0e0e0;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    #history {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+
+    .message {
+      display: flex;
+      align-items: flex-end;
+      margin-bottom: 15px;
+      max-width: 80%;
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+
+    .message.user {
+      justify-content: flex-end;
+      margin-left: auto;
+    }
+
+    .message.user .bubble {
+      background-color: #585c63;
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 10px 15px;
+      font-size: 1em;
+      word-wrap: break-word;
+      max-width: 60%;
+      transition: background-color 0.3s ease;
+    }
+
+
+    .message.assistant {
+      justify-content: flex-start;
+      margin-right: auto;
+    }
+
+    .message.assistant .bubble {
+      background-color: #4b4e54;
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 10px 15px;
+      font-size: 1em;
+      word-wrap: break-word;
+      max-width: 60%;
+    }
+
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-size: cover;
+      background-position: center;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    #recordButton, #stopButton, #clearHistoryButton {
+      border-radius: 8px;
+      width: 80px;
+      height: 80px;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5em;
+      background: #505357;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px auto;
+      outline: none;
+      transition: background 0.3s ease;
+    }
+
+    #recordButton:hover, #stopButton:hover, #clearHistoryButton:hover {
+      background: #65686e;
+    }
+
+    #clearHistoryButton {
+      width: auto;
+      height: 40px;
+      padding: 0 15px;
+      font-size: 1em;
+      margin-top: 10px;
+      display: none;
+      background-color: #e74c3c;
+      color: #ffffff;
+      border-radius: 8px;
+    }
+
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 180px;
+      background-color: #4a4d52;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 140%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      font-size: 0.85em;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .status {
+      margin-top: 15px;
+      font-size: 1em;
+      font-weight: 600;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    .error-message, .success-message {
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      margin-top: 10px;
+      text-align: center;
+      display: none;
+    }
+
+    .error-message {
+      background-color: #e74c3c;
+    }
+
+    .success-message {
+      background-color: #2ecc71;
+    }
+
+    @media screen and (max-width: 800px) {
+      .main-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .container, .history-container {
+        max-width: 90%;
+      }
+
+      .message {
+        max-width: 100%;
+      }
+
+      .message.user .bubble, .message.assistant .bubble {
+        max-width: 70%;
+      }
+
+      #recordButton, #stopButton {
+        width: 60px;
+        height: 60px;
+        font-size: 1.2em;
+      }
+
+      .status {
+        font-size: 0.9em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <div class="container">
+      <div class="tooltip">
+        <button id="recordButton" aria-label="Klicken Sie hier, um Ihre Nachricht aufzunehmen"><i class="fas fa-microphone"></i></button>
+        <span class="tooltiptext">Klicken Sie, um die Aufnahme zu starten/stoppen</span>
+      </div>
+      <div class="tooltip">
+        <button id="stopButton" aria-label="Klicken Sie hier, um die Wiedergabe zu stoppen"><i class="fas fa-stop"></i></button>
+        <span class="tooltiptext">Klicken Sie, um die Wiedergabe zu stoppen</span>
+      </div>
+      <div id="status" class="status">Bereit zur Aufnahme</div>
+      <div id="errorMessage" class="error-message"></div>
+      <div id="successMessage" class="success-message"></div>
+      <button id="clearHistoryButton" aria-label="Gesprächsverlauf löschen"><i class="fas fa-trash-alt"></i> Verlauf löschen</button>
+    </div>
+
+    <div class="history-container" id="historyContainer">
+      <h2>Gesprächsverlauf</h2>
+      <div id="history"></div>
+    </div>
+  </div>
+ <script>
+    let isRecording = false;
+    let mediaRecorder;
+    let audioChunks = [];
+    let responseAudio = null;
+    let recordingStartTime;
+    let timerInterval;
+
+    const recordButton = document.getElementById('recordButton');
+    const stopButton = document.getElementById('stopButton');
+    const statusDiv = document.getElementById('status');
+    const iconDiv = document.getElementById('icon');
+    const historyContainer = document.getElementById('historyContainer');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    const clearHistoryButton = document.getElementById('clearHistoryButton');
+
+    stopButton.style.display = 'inline-flex'; 
+    clearHistoryButton.style.display = 'none';
+
+    recordButton.addEventListener('click', () => {
+      if (!isRecording) {
+        startRecording();
+      } else {
+        stopRecording();
+      }
+    });
+
+    stopButton.addEventListener('click', () => {
+      if (responseAudio) {
+        responseAudio.pause();
+        responseAudio.currentTime = 0;
+        updateUI('stopped');
+      }
+    });
+
+    clearHistoryButton.addEventListener('click', () => {
+      clearHistory();
+    });
+
+    async function startRecording() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = event => {
+          audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = handleRecordingStop;
+
+        mediaRecorder.start();
+        isRecording = true;
+        recordingStartTime = Date.now();
+        updateUI('running');
+        startTimer();
+      } catch (error) {
+        console.error('Fehler beim Zugriff auf das Mikrofon:', error);
+        showError('Fehler beim Zugriff auf das Mikrofon: ' + error.message);
+      }
+    }
+
+    function stopRecording() {
+      if (mediaRecorder && isRecording) {
+        mediaRecorder.stop();
+        isRecording = false;
+        updateUI('processing');
+        stopTimer();
+      }
+    }
+
+    async function handleRecordingStop() {
+      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      const formData = new FormData();
+      formData.append('audio_data', audioBlob, 'audio.webm');
+
+      try {
+        const response = await fetch('/process_audio', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+
+    
+          if (data.user_text) {
+            addMessageToHistory('user', data.user_text);
+          }
+
+          if (data.assistant_text) {
+            addMessageToHistory('assistant', data.assistant_text);
+          }
+
+      
+          if (data.audio) { 
+            const audioData = data.audio;
+            const audioBlobResponse = base64ToBlob(audioData, 'audio/mp3'); // Korrigieren Sie den MIME-Typ, falls erforderlich
+            const audioURL = window.URL.createObjectURL(audioBlobResponse);
+            responseAudio = new Audio(audioURL);
+            responseAudio.play();
+            responseAudio.onended = () => {
+              updateUI('stopped');
+            };
+            updateUI('playing');
+          }
+
+          showSuccess('Aufnahme erfolgreich verarbeitet.');
+        } else {
+          console.error('Serverfehler:', response.statusText);
+          showError('Serverfehler: ' + response.statusText);
+          updateUI('error');
+        }
+      } catch (error) {
+        console.error('Fehler beim Senden der Audiodaten:', error);
+        showError('Fehler beim Senden der Audiodaten: ' + error.message);
+        updateUI('error');
+      }
+    }
+
+    function updateUI(state) {
+      switch (state) {
+        case 'running':
+          recordButton.innerHTML = '<i class="fas fa-stop"></i>';
+          recordButton.classList.add('recording');
+          recordButton.setAttribute('aria-label', 'Klicken Sie hier, um die Aufnahme zu stoppen');
+          statusDiv.textContent = 'Aufnahme läuft...';
+          iconDiv.innerHTML = '<i class="fas fa-wave-square"></i>';
+          stopButton.style.display = 'inline-flex';
+          clearHistoryButton.style.display = 'none';
+          errorMessage.style.display = 'none';
+          successMessage.style.display = 'none';
+          break;
+        case 'processing':
+          recordButton.innerHTML = '<i class="fas fa-microphone"></i>';
+          recordButton.classList.remove('recording');
+          recordButton.setAttribute('aria-label', 'Klicken Sie hier, um die Aufnahme zu starten');
+          statusDiv.innerHTML = 'Verarbeite Aufnahme... <div class="spinner"></div>';
+          iconDiv.innerHTML = '';
+          stopButton.style.display = 'inline-flex';
+          clearHistoryButton.style.display = 'none';
+          break;
+        case 'playing':
+          statusDiv.textContent = 'Lucia spricht...';
+          iconDiv.innerHTML = '<i class="fas fa-play-circle"></i>';
+          iconDiv.classList.add('playing');
+          stopButton.style.display = 'inline-flex';
+          clearHistoryButton.style.display = 'inline-block';
+          setTimeout(() => iconDiv.classList.remove('playing'), 1000);
+          break;
+        case 'stopped':
+          recordButton.innerHTML = '<i class="fas fa-microphone"></i>';
+          recordButton.classList.remove('recording');
+          recordButton.setAttribute('aria-label', 'Klicken Sie hier, um die Aufnahme zu starten');
+          statusDiv.textContent = 'Bereit zur Aufnahme';
+          iconDiv.innerHTML = '';
+          stopButton.style.display = 'inline-flex';
+          clearHistoryButton.style.display = 'inline-block';
+          break;
+        case 'error':
+          recordButton.innerHTML = '<i class="fas fa-microphone"></i>';
+          recordButton.classList.remove('recording');
+          recordButton.setAttribute('aria-label', 'Klicken Sie hier, um die Aufnahme zu starten');
+          statusDiv.textContent = 'Fehler bei der Verarbeitung';
+          iconDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+          stopButton.style.display = 'inline-flex';
+          clearHistoryButton.style.display = 'none';
+          break;
+        default:
+          recordButton.innerHTML = '<i class="fas fa-microphone"></i>';
+          recordButton.classList.remove('recording');
+          recordButton.setAttribute('aria-label', 'Klicken Sie hier, um die Aufnahme zu starten');
+          statusDiv.textContent = 'Bereit zur Aufnahme';
+          iconDiv.innerHTML = '';
+          stopButton.style.display = 'inline-flex';
+          clearHistoryButton.style.display = 'none';
+          break;
+      }
+    }
+
+    function addMessageToHistory(sender, message) {
+      const historyDiv = document.getElementById('history');
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message');
+
+      if (sender === 'user') {
+        messageDiv.classList.add('user');
+      } else {
+        messageDiv.classList.add('assistant');
+      }
+
+      if (sender !== 'user') {
+        const avatarDiv = document.createElement('div');
+        avatarDiv.classList.add('avatar');
+        if (sender === 'assistant') {
+          avatarDiv.style.backgroundImage = 'url("https://i.pravatar.cc/40?img=5")';
+        }
+        messageDiv.appendChild(avatarDiv);
+      }
+
+      const bubbleDiv = document.createElement('div');
+      bubbleDiv.classList.add('bubble');
+
+      messageDiv.appendChild(bubbleDiv);
+      historyDiv.appendChild(messageDiv);
+
+      historyDiv.scrollTop = historyDiv.scrollHeight;
+
+      if (sender === 'assistant') {
+        streamMessage(bubbleDiv, message);
+      } else {
+        bubbleDiv.textContent = message;
+      }
+
+      clearHistoryButton.style.display = 'inline-block';
+    }
+
+    function streamMessage(element, message, index = 0) {
+      if (index < message.length) {
+        element.textContent += message.charAt(index);
+        index++;
+        setTimeout(() => streamMessage(element, message, index), 50);
+      }
+    }
+
+    function base64ToBlob(base64, mime) {
+      const byteChars = atob(base64);
+      const byteNumbers = new Array(byteChars.length);
+      for (let i = 0; i < byteChars.length; i++) {
+        byteNumbers[i] = byteChars.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      return new Blob([byteArray], { type: mime });
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.classList.add('show');
+      setTimeout(() => {
+        errorMessage.classList.remove('show');
+      }, 5000);
+    }
+
+    function showSuccess(message) {
+      successMessage.textContent = message;
+      successMessage.classList.add('show');
+      setTimeout(() => {
+        successMessage.classList.remove('show');
+      }, 5000);
+    }
+
+    function clearHistory() {
+      const historyDiv = document.getElementById('history');
+      historyDiv.innerHTML = '';
+      clearHistoryButton.style.display = 'none';
+      showSuccess('Gesprächsverlauf gelöscht.');
+    }
+
+    function startTimer() {
+      statusDiv.textContent = 'Aufnahme läuft... 0s';
+      timerInterval = setInterval(() => {
+        const elapsedSeconds = Math.floor((Date.now() - recordingStartTime) / 1000);
+        statusDiv.textContent = `Aufnahme läuft... ${elapsedSeconds}s`;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === ' ' || event.key === 'Enter') {
+        if (document.activeElement === recordButton) {
+          event.preventDefault();
+          recordButton.click();
+        }
+        if (document.activeElement === stopButton) {
+          event.preventDefault();
+          stopButton.click();
+        }
+        if (document.activeElement === clearHistoryButton) {
+          event.preventDefault();
+          clearHistoryButton.click();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
