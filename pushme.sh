@@ -4,4 +4,4 @@ git fetch
 commit=$1
 git add *
 git commit -m "$commit"
-git push -a
+git push
