@@ -19,10 +19,14 @@ TEMPLATE_TEXT = """Dein Dienstname ist "Lucia" und du beantwortest die Fragen vo
 Human: {human_input}
 Assistant:"""
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+api_key = os.getenv("OPENAI_API_KEY")
+
+if not api_key:
+    raise ValueError("Die Umgebungsvariable 'OPENAI_API_KEY' wurde nicht gesetzt")
+
 prompt = PromptTemplate(input_variables=["history", "human_input"], template=TEMPLATE_TEXT)
 chatgpt_chain = LLMChain(
-    llm=OpenAI(temperature=0),
+    llm=OpenAI(temperature=0, openai_api_key=api_key),
     prompt=prompt,
     verbose=True,
     memory=ConversationBufferWindowMemory(k=3)
@@ -89,4 +93,4 @@ def process_audio():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
