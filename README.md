@@ -71,6 +71,20 @@ pip install -r requirements.txt
 ```bash
 python app.py
 ```
+### **Alternativ: Mit Docker**
+
+```bash
+# Docker-Image bauen:
+docker build -t luciabot .
+
+# Container ausführen:
+docker run -d -p 5000:5000 --name luciabot_container -e OPENAI_API_KEY="set your api key here" luciabot
+
+# Container stoppen und löschen:
+docker rm -f luciabot_container
+
+# Logs einsehen:
+docker logs luciabot_container
 
 ### Endpunkte
 
