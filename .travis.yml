@@ -1,0 +1,15 @@
+language: python
+python:
+  - "3.11"
+virtualenv:
+  system_site_packages: true
+
+install:
+  - pip3 install --upgrade pip
+  - pip3 install -r requirements.txt
+
+script:
+  - pytest
+
+notifications:
+  email: false
