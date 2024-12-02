@@ -4,4 +4,5 @@ openai==0.28
 edge-tts
 langchain-community
 langchain-core
+pytest
 

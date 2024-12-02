@@ -85,6 +85,26 @@ docker rm -f luciabot_container
 
 # Logs einsehen:
 docker logs luciabot_container
+=======
+#### Docker-Image bauen:
+```bash
+docker build -t luciabot .
+```
+### Container ausführen:
+
+```bash
+docker run -d -p 5000:5000 --name luciabot_container -e OPENAI_API_KEY="set your api key here" luciabot
+```
+
+### Container stoppen und löschen:
+
+```bash
+docker rm -f luciabot_container
+```
+### Logs einsehen:
+```bash
+docker logs luciabot_container
+```
 
 ### Endpunkte
 
