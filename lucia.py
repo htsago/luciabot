@@ -16,7 +16,7 @@ CORS(app)
 
 TEMPLATE_TEXT = """Dein Dienstname ist "Lucia" und du beantwortest die Fragen von Nutzern in einem Ton und Akzent.
 {history}
-Human: {human_input}
+{human_input}
 Assistant:"""
 
 api_key = os.getenv("OPENAI_API_KEY")
